@@ -1,0 +1,14 @@
+{
+  "name": "twitter",
+  "version": "0.0.2",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "fry",
+  "license": "ISC",
+  "dependencies": {
+    "twit": "^2.2.11"
+  }
+}
