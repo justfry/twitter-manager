@@ -1,6 +1,9 @@
 const Twit = require('twit')
 const keys = require('../keys/keys')
 const fs = require('fs')
+const defaultMen = require('./defaultTwitterMen')
+
+const fileToWriteLikes = __dirname + '/../output/likes.json'
 
 const T = new Twit(keys)
 
@@ -23,15 +26,9 @@ const getFollowers = screenName => {
       }))
 }
 const makeFriendship = id => {
-    
     return new Promise((rs,rj) => T.post('friendships/create', { id: id }, (err, data, response) => {
         if (err) rj(err)
-        else{
-            getPosts(id)
-                .then(posts => likeTweet(posts))
-                .catch(err => console.error(err))
-            rs(data)
-        }
+        rs(data)
       }))
 }
 const getPosts = userID => {
@@ -41,7 +38,7 @@ const getPosts = userID => {
       }))
 }
 const likeTweet = tweets => {
-    fs.appendFileSync('./output/likes.json',JSON.stringify(tweets))
+    fs.appendFileSync(fileToWriteLikes,JSON.stringify(tweets))
     for (var i = 0, len = tweets.length; i < len; i++){
         T.post('favorites/create', { id: tweets[i].id_str }, (err, data, response) => {
             if (err) rj(err)
@@ -72,21 +69,11 @@ function delay(t, val) {
         }, t);
     });
 }
-const getRandomMan = () => {
-    mainMans = [
-        'ipazii', 
-        'electroeb', 
-        'fe_city_boy', 
-        'No_more_Vodka', 
-        'kass_my_ass', 
-        'feeling_so_real',
-        'nikitamartovsky',
-        'badboev'
-    ]
+const getRandomMan = (mainMans = defaultMen) => {
     return mainMans[Math.floor(Math.random() * mainMans.length)]
 }
 
-async function makeFollowers(){
+async function makeFollowers(whomToDo, enableLikes = false){
     let maked = []
     try{
         ids = await getFollowers(getRandomMan())
@@ -97,8 +84,13 @@ async function makeFollowers(){
         console.log(`${i} of ${len} id: ${ids[i]}`)
         try{
             maked.push(await makeFriendship(ids[i]))
+            enableLikes && 
+            await getPosts(ids[i])
+                    .then(posts => likeTweet(posts))
+                    .catch(err => console.error(err))
         } catch(err){
             console.error("make friends " + err)
+            continue
         }
         await delay(Math.floor(Math.random() * (9 - 6 + 1) + 6) * 40000)
         ids = await getFollowers(getRandomMan())
