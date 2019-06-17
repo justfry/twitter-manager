@@ -1,14 +1,30 @@
 {
-  "name": "twitter",
+  "name": "twitup",
   "version": "0.0.2",
   "description": "",
   "main": "app.js",
+  "bin": {
+    "twitup": "./bin/twitup-cli.js"
+  },
   "scripts": {
-    "test": "test"
+    "test": "nyc mocha --recursive"
   },
   "author": "fry",
   "license": "ISC",
   "dependencies": {
-    "twit": "^2.2.11"
+    "axios": "^0.18.0",
+    "chai-as-promised": "^7.1.1",
+    "chalk": "^2.4.2",
+    "commander": "^2.20.0",
+    "configstore": "^4.0.0",
+    "inquirer": "^6.3.1",
+    "twitter": "^1.7.1"
+  },
+  "devDependencies": {
+    "nyc": "^14.1.1",
+    "chai": "^4.2.0",
+    "install": "^0.12.2",
+    "mocha": "^6.1.4",
+    "sinon": "^7.3.2"
   }
 }
